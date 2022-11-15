@@ -11,5 +11,6 @@ namespace CashFlow.Application.Interfaces
         FlowViewModel GetById(string id);
         bool Put(FlowViewModel flowViewModel);
         bool Delete(string id);
+        List<ReportFlowViewModel> GetDailyReport();
     }
 }

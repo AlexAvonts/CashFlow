@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CashFlow.Application.AutoMapper;
+using CashFlow.Application.Interfaces;
 using CashFlow.Application.Services;
 using CashFlow.Application.ViewModels;
 using CashFlow.Domain.Entities;
@@ -25,8 +26,7 @@ namespace CashFlow.Application.Tests.Services
         public void Post_SendingValidId()
         {
             var exception = Assert.Throws<Exception>(() => flowService.Post(new ViewModels.FlowViewModel()));
-
-            Assert.Equal("ID da transação não pode ser nula", exception.Message);
+            Assert.Equal("ID da transação não pode ser nulo", exception.Message);
         }
 
         [Fact]
@@ -92,6 +92,5 @@ namespace CashFlow.Application.Tests.Services
             var result = flowService.Get();
             Assert.True(result.Count > 0);
         }
-
     }
 }

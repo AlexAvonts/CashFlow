@@ -44,5 +44,11 @@ namespace CashFlow.Controllers
         {
             return Ok(this.flowService.Delete(id));
         }
+
+        [HttpGet("GetDailyReport")]
+        public IActionResult GetDailyReport()
+        {
+            return Ok(this.flowService.GetDailyReport());
+        }
     }
 }

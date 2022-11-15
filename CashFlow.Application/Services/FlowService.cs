@@ -7,6 +7,7 @@ using CashFlow.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using ValidationContext = System.ComponentModel.DataAnnotations.ValidationContext;
 
 namespace CashFlow.Application.Services
@@ -22,24 +23,21 @@ namespace CashFlow.Application.Services
         }
         public List<FlowViewModel> Get() 
         {
-            List<FlowViewModel> _flowViewModels = new List<FlowViewModel>();
             IEnumerable<Flow> _flows = this.flowRepository.GetAll();
-
-            _flowViewModels = mapper.Map<List<FlowViewModel>>(_flows);
-            return _flowViewModels;
+            return mapper.Map<List<FlowViewModel>>(_flows); ;
         }
 
         public bool Post(FlowViewModel flowViewModel)
         {
             if(flowViewModel.Id == Guid.Empty)
-                throw new Exception("ID da transação não pode ser nula");
+                throw new Exception("ID da transação não pode ser nulo");
 
             Validator.ValidateObject(flowViewModel, new ValidationContext(flowViewModel), true);
 
             Flow _flow = mapper.Map<Flow>(flowViewModel);
             this.flowRepository.Create(_flow);
 
-            return true;
+            return true;   
         }
 
         public FlowViewModel GetById(string id)
@@ -52,6 +50,17 @@ namespace CashFlow.Application.Services
                 throw new Exception("Transação não encontrada");
 
             return mapper.Map<FlowViewModel>(_flow);
+        }
+
+        public List<ReportFlowViewModel> GetDailyReport()
+        {
+            List<IGrouping<DateTime, Flow>> _flows = flowRepository.GetAll().GroupBy(x => x.DateCreated.Date).ToList();
+
+            if (_flows == null)
+                throw new Exception("Não foi possível obter o fluxo do caixa.");
+
+            List<ReportFlow> reportFlows = this.SumByDay(_flows);
+            return mapper.Map<List<ReportFlowViewModel>>(reportFlows);
         }
 
         public bool Put(FlowViewModel flowViewModel)
@@ -83,5 +92,30 @@ namespace CashFlow.Application.Services
 
             return true;
         }
+
+        private List<ReportFlow> SumByDay(List<IGrouping<DateTime, Flow>> flows)
+        {
+            List<ReportFlow> _flows = new List<ReportFlow>();
+            double _total = 0;
+
+            foreach (var items in flows)
+            {
+                ReportFlow _flow = new ReportFlow();
+
+                foreach (var item in items)
+                {
+                   if(item.FlowType == "C")                    
+                        _total += item.Value;                    
+                   else                     
+                        _total -= item.Value;
+                }
+                _flow.SumValue = _total.ToString("C2");
+                _flow.Date = items.Key.ToShortDateString();
+                _total = 0;
+                _flows.Add(_flow);                
+            }
+
+            return _flows;
+        }       
     }
 }
