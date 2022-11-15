@@ -17,7 +17,7 @@ namespace CashFlow.Data.Migrations
                 table: "Flows",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+                defaultValue: new DateTime());
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "DateUpdated",
@@ -35,7 +35,7 @@ namespace CashFlow.Data.Migrations
             migrationBuilder.InsertData(
                 table: "Flows",
                 columns: new[] { "Id", "DateCreated", "DateUpdated", "FlowType", "IsDeleted", "Value" },
-                values: new object[] { new Guid("61ae05b8-5236-498c-8732-0a70681b6bad"), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, "C", false, 12.300000000000001 });
+                values: new object[] { new Guid("61ae05b8-5236-498c-8732-0a70681b6bad"), new DateTime(), null, "C", false, 12.300000000000001 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

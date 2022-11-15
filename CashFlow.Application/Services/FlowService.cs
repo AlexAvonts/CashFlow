@@ -5,6 +5,7 @@ using CashFlow.Application.ViewModels;
 using CashFlow.Domain.Entities;
 using CashFlow.Domain.Interfaces;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -35,6 +36,7 @@ namespace CashFlow.Application.Services
             Validator.ValidateObject(flowViewModel, new ValidationContext(flowViewModel), true);
 
             Flow _flow = mapper.Map<Flow>(flowViewModel);
+            _flow.DateCreated = DateTime.Now;
             this.flowRepository.Create(_flow);
 
             return true;   
@@ -54,12 +56,14 @@ namespace CashFlow.Application.Services
 
         public List<ReportFlowViewModel> GetDailyReport()
         {
-            List<IGrouping<DateTime, Flow>> _flows = flowRepository.GetAll().GroupBy(x => x.DateCreated.Date).ToList();
+            IEnumerable<Flow> flows= this.flowRepository.GetAll();
+
+            IEnumerable<IGrouping<DateTime, Flow>> _flows = flowRepository.GetAll().GroupBy(x => x.DateCreated.Date).ToList();
 
             if (_flows == null)
                 throw new Exception("Não foi possível obter o fluxo do caixa.");
 
-            List<ReportFlow> reportFlows = this.SumByDay(_flows);
+            IEnumerable<ReportFlow> reportFlows = this.SumByDay(_flows);
             return mapper.Map<List<ReportFlowViewModel>>(reportFlows);
         }
 
@@ -93,26 +97,26 @@ namespace CashFlow.Application.Services
             return true;
         }
 
-        private List<ReportFlow> SumByDay(List<IGrouping<DateTime, Flow>> flows)
+        private List<ReportFlow> SumByDay(IEnumerable<IGrouping<DateTime, Flow>> flows)
         {
             List<ReportFlow> _flows = new List<ReportFlow>();
-            double _total = 0;
+
+            var credits = flows.Select(x => x.Where(a => a.FlowType == "c")).ToList();
+            var creditsValues = credits.Select(x => x.Select(a => a.Value).Sum()).ToList();
+
+            var debits = flows.Select(x => x.Where(a => a.FlowType == "d")).ToList();
+            var debitsValues = debits.Select(x => x.Select(a => a.Value).Sum()).ToList();
+
+            int aux = 0;
 
             foreach (var items in flows)
             {
                 ReportFlow _flow = new ReportFlow();
 
-                foreach (var item in items)
-                {
-                   if(item.FlowType == "C")                    
-                        _total += item.Value;                    
-                   else                     
-                        _total -= item.Value;
-                }
-                _flow.SumValue = _total.ToString("C2");
+                _flow.SumValue = (creditsValues[aux] - debitsValues[aux]).ToString("C2");
                 _flow.Date = items.Key.ToShortDateString();
-                _total = 0;
-                _flows.Add(_flow);                
+                _flows.Add(_flow);
+                aux++;
             }
 
             return _flows;

@@ -50,7 +50,7 @@ namespace CashFlow.Data.Migrations
                         new
                         {
                             Id = new Guid("32ace793-15ee-4830-bf6a-496bbb486bfb"),
-                            DateCreated = new DateTime(2022, 11, 12, 19, 5, 52, 228, DateTimeKind.Local).AddTicks(6465),
+                            DateCreated = new DateTime(),
                             FlowType = "C",
                             IsDeleted = false,
                             Value = 12.300000000000001

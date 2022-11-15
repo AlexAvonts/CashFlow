@@ -26,14 +26,14 @@ namespace CashFlow.Data.Migrations
                 table: "Flows",
                 type: "datetime2",
                 nullable: false,
-                defaultValue: new DateTime(2022, 11, 12, 20, 23, 49, 701, DateTimeKind.Local).AddTicks(7103),
+                defaultValue: new DateTime().AddTicks(7103),
                 oldClrType: typeof(DateTime),
                 oldType: "datetime2");
 
             migrationBuilder.InsertData(
                 table: "Flows",
                 columns: new[] { "Id", "DateCreated", "DateUpdated", "FlowType", "Value" },
-                values: new object[] { new Guid("022c5946-ba72-4706-9d7d-5015dd574978"), new DateTime(2022, 11, 12, 20, 23, 49, 709, DateTimeKind.Local).AddTicks(1180), null, "C", 12.300000000000001 });
+                values: new object[] { new Guid("022c5946-ba72-4706-9d7d-5015dd574978"), new DateTime(), null, "C", 12.300000000000001 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -64,7 +64,7 @@ namespace CashFlow.Data.Migrations
             migrationBuilder.InsertData(
                 table: "Flows",
                 columns: new[] { "Id", "DateCreated", "DateUpdated", "FlowType", "IsDeleted", "Value" },
-                values: new object[] { new Guid("32ace793-15ee-4830-bf6a-496bbb486bfb"), new DateTime(2022, 11, 12, 19, 5, 52, 228, DateTimeKind.Local).AddTicks(6465), null, "C", false, 12.300000000000001 });
+                values: new object[] { new Guid("32ace793-15ee-4830-bf6a-496bbb486bfb"), new DateTime(), null, "C", false, 12.300000000000001 });
         }
     }
 }

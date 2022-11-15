@@ -173,7 +173,6 @@ namespace CashFlow.Data.Repositories
             }
             catch (Exception)
             {
-
                 throw;
             }
         }

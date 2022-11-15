@@ -30,7 +30,7 @@ namespace CashFlow.Data.Migrations
                     b.Property<DateTime>("DateCreated")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
-                        .HasDefaultValue(new DateTime(2022, 11, 12, 20, 23, 49, 701, DateTimeKind.Local).AddTicks(7103));
+                        .HasDefaultValue(new DateTime());
 
                     b.Property<DateTime?>("DateUpdated")
                         .HasColumnType("datetime2");
@@ -54,7 +54,7 @@ namespace CashFlow.Data.Migrations
                         new
                         {
                             Id = new Guid("022c5946-ba72-4706-9d7d-5015dd574978"),
-                            DateCreated = new DateTime(2022, 11, 12, 20, 23, 49, 709, DateTimeKind.Local).AddTicks(1180),
+                            DateCreated = new DateTime(),
                             FlowType = "C",
                             IsDeleted = false,
                             Value = 12.300000000000001
