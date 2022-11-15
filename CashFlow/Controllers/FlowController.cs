@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CashFlow.Controllers
 {
-    [Route("api/Controller")]
+    [Route("api/FlowController")]
     [ApiController]
     public class FlowController : ControllerBase
     {
@@ -43,12 +43,6 @@ namespace CashFlow.Controllers
         public IActionResult Delete(string id)
         {
             return Ok(this.flowService.Delete(id));
-        }
-
-        [HttpGet("GetDailyReport")]
-        public IActionResult GetDailyReport()
-        {
-            return Ok(this.flowService.GetDailyReport());
         }
     }
 }
