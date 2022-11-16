@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CashFlow.Application.ViewModels
 {
@@ -12,7 +8,7 @@ namespace CashFlow.Application.ViewModels
         public Guid Id { get; set; }
         public double Value { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Campo FlowType, não pode ser nulo/branco")]        
         public string FlowType { get; set; }
     }
 }

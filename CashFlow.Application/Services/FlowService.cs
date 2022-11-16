@@ -7,6 +7,7 @@ using CashFlow.Domain.Interfaces;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using ValidationContext = System.ComponentModel.DataAnnotations.ValidationContext;
@@ -17,6 +18,7 @@ namespace CashFlow.Application.Services
     {
         private readonly IFlowRepository flowRepository;
         private readonly IMapper mapper;
+
         public FlowService(IFlowRepository flowRepository, IMapper mapper)
         {
             this.flowRepository = flowRepository;
@@ -28,17 +30,33 @@ namespace CashFlow.Application.Services
             return mapper.Map<List<FlowViewModel>>(_flows); ;
         }
 
-        public bool Post(FlowViewModel flowViewModel)
+        public bool FlowValidate(FlowViewModel flowViewModel)
         {
-            if(flowViewModel.Id == Guid.Empty)
+            if (flowViewModel.Id == Guid.Empty)
                 throw new Exception("ID da transação não pode ser nulo");
 
-            Validator.ValidateObject(flowViewModel, new ValidationContext(flowViewModel), true);
+            Validator.ValidateObject(flowViewModel, new ValidationContext(flowViewModel), true);            
 
-            Flow _flow = mapper.Map<Flow>(flowViewModel);
-            _flow.DateCreated = DateTime.Now;
-            this.flowRepository.Create(_flow);
+            if (flowViewModel.FlowType.ToUpper() == "C") 
+            {
+                CreditService creditService = new CreditService(flowRepository, mapper);
+                creditService.AddCredit(flowViewModel);
+            }
+            else if(flowViewModel.FlowType.ToUpper() == "D")
+            {
+                DebitService debitService = new DebitService(flowRepository, mapper);
+                debitService.AddDebit(flowViewModel);
+            }
+            else
+                throw new Exception("Tipo de transação não aceita. No campo 'FlowType', utilizar letra C para crédito ou D para débito");
 
+
+            return true;
+        }
+
+        public bool Post(Flow flow)
+        {
+            this.flowRepository.Create(flow);
             return true;   
         }
 
@@ -56,7 +74,7 @@ namespace CashFlow.Application.Services
 
         public List<ReportFlowViewModel> GetDailyReport()
         {
-            IEnumerable<Flow> flows= this.flowRepository.GetAll();
+            IEnumerable<Flow> flows = this.flowRepository.GetAll();
 
             IEnumerable<IGrouping<DateTime, Flow>> _flows = flowRepository.GetAll().GroupBy(x => x.DateCreated.Date).ToList();
 
@@ -101,10 +119,10 @@ namespace CashFlow.Application.Services
         {
             List<ReportFlow> _flows = new List<ReportFlow>();
 
-            var credits = flows.Select(x => x.Where(a => a.FlowType == "c")).ToList();
+            var credits = flows.Select(x => x.Where(a => a.FlowType == "C")).ToList();
             var creditsValues = credits.Select(x => x.Select(a => a.Value).Sum()).ToList();
 
-            var debits = flows.Select(x => x.Where(a => a.FlowType == "d")).ToList();
+            var debits = flows.Select(x => x.Where(a => a.FlowType == "D")).ToList();
             var debitsValues = debits.Select(x => x.Select(a => a.Value).Sum()).ToList();
 
             int aux = 0;
@@ -120,6 +138,6 @@ namespace CashFlow.Application.Services
             }
 
             return _flows;
-        }       
+        }
     }
 }

@@ -25,7 +25,7 @@ namespace CashFlow.Controllers
         [HttpPost]
         public IActionResult Post(FlowViewModel flowViewModel)
         {
-            return Ok(this.flowService.Post(flowViewModel));
+            return Ok(this.flowService.FlowValidate(flowViewModel));
         }
 
         [HttpGet("{id}")]
