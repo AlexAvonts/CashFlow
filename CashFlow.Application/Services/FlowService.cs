@@ -32,9 +32,6 @@ namespace CashFlow.Application.Services
 
         public bool FlowValidate(FlowViewModel flowViewModel)
         {
-            if (flowViewModel.Id == Guid.Empty)
-                throw new Exception("ID da transação não pode ser nulo");
-
             Validator.ValidateObject(flowViewModel, new ValidationContext(flowViewModel), true);            
 
             if (flowViewModel.FlowType.ToUpper() == "C") 
@@ -49,7 +46,6 @@ namespace CashFlow.Application.Services
             }
             else
                 throw new Exception("Tipo de transação não aceita. No campo 'FlowType', utilizar letra C para crédito ou D para débito");
-
 
             return true;
         }
@@ -70,20 +66,7 @@ namespace CashFlow.Application.Services
                 throw new Exception("Transação não encontrada");
 
             return mapper.Map<FlowViewModel>(_flow);
-        }
-
-        public List<ReportFlowViewModel> GetDailyReport()
-        {
-            IEnumerable<Flow> flows = this.flowRepository.GetAll();
-
-            IEnumerable<IGrouping<DateTime, Flow>> _flows = flowRepository.GetAll().GroupBy(x => x.DateCreated.Date).ToList();
-
-            if (_flows == null)
-                throw new Exception("Não foi possível obter o fluxo do caixa.");
-
-            IEnumerable<ReportFlow> reportFlows = this.SumByDay(_flows);
-            return mapper.Map<List<ReportFlowViewModel>>(reportFlows);
-        }
+        }        
 
         public bool Put(FlowViewModel flowViewModel)
         {
@@ -113,6 +96,17 @@ namespace CashFlow.Application.Services
             this.flowRepository.Update(_flow);
 
             return true;
+        }
+
+        public List<ReportFlowViewModel> GetDailyReport()
+        {
+            IEnumerable<IGrouping<DateTime, Flow>> _flows = flowRepository.GetAll().GroupBy(x => x.DateCreated.Date).ToList();
+
+            if (_flows == null)
+                throw new Exception("Não foi possível obter o fluxo do caixa.");
+
+            IEnumerable<ReportFlow> reportFlows = this.SumByDay(_flows);
+            return mapper.Map<List<ReportFlowViewModel>>(reportFlows);
         }
 
         private List<ReportFlow> SumByDay(IEnumerable<IGrouping<DateTime, Flow>> flows)

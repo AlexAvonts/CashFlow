@@ -8,7 +8,7 @@ namespace CashFlow.Application.ViewModels
         public Guid Id { get; set; }
         public double Value { get; set; }
 
-        [Required(ErrorMessage = "Campo FlowType, não pode ser nulo/branco")]        
+        [Required(ErrorMessage = "Campo FlowType, não pode ser nulo/branco.")]        
         public string FlowType { get; set; }
     }
 }

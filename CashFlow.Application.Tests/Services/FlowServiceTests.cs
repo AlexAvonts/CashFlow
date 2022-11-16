@@ -23,13 +23,6 @@ namespace CashFlow.Application.Tests.Services
         }
 
         [Fact]
-        public void Post_SendingValidId()
-        {
-            var exception = Assert.Throws<Exception>(() => flowService.Post(new ViewModels.FlowViewModel()));
-            Assert.Equal("ID da transação não pode ser nulo", exception.Message);
-        }
-
-        [Fact]
         public void GetById_SendingEmptyGuid()
         {
             var exception = Assert.Throws<Exception>(() => flowService.GetById(""));
@@ -61,18 +54,11 @@ namespace CashFlow.Application.Tests.Services
         }
 
         [Fact]
-        public void Post_SendingValidObject()
+        public void FlowValidate_SendingInvalidValidObject()
         {
-            var result = flowService.Post(new FlowViewModel { Id = Guid.NewGuid(), Value = 12.5, FlowType = "C" });
-            Assert.True(result); 
-        }
-
-        [Fact]
-        public void Post_SendingInvalidValidObject()
-        {
-            var exception = Assert.Throws<ValidationException>(() => flowService.Post(new FlowViewModel 
+            var exception = Assert.Throws<ValidationException>(() => flowService.FlowValidate(new FlowViewModel 
                 { Id = Guid.NewGuid(), Value = 12.5 }));
-            Assert.Equal("The FlowType field is required.", exception.Message);
+            Assert.Equal("Campo FlowType, não pode ser nulo/branco.", exception.Message);
         }
 
         [Fact]
